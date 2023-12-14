@@ -20,13 +20,17 @@ class Bmp{
         int cols;
         int buffer_size;
         std :: vector < std :: vector <pixel>> pixels;
+        std :: vector<std :: vector<int>> blur = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
     public:
         Bmp(char* file_name_);
         bool find_and_allocate();
         void get_pixels_from_BMP24();
         void write_out_BMP24();
         void vertical_mirror();
+        pixel convolve(int row, int col, float coeff, std :: vector<std :: vector<int>>kernel);
+        void blur_filter();
         void purple_haze();
+        void draw_line();
         void run();
 
 };

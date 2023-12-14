@@ -233,9 +233,9 @@ void Bmp :: draw_line() {
 void Bmp :: run() {
     find_and_allocate();
     get_pixels_from_BMP24();
-    purple_haze();
     vertical_mirror();
     blur_filter();
+    purple_haze();
     draw_line();
     write_out_BMP24();
 }

@@ -9,6 +9,7 @@ Bmp :: Bmp(char* file_name_)
           {}
 
 bool Bmp :: find_and_allocate() {
+    auto start = chrono :: high_resolution_clock :: now();
     ifstream file(file_name);
     if (!file) {
         std::cout << "File" << file_name << " doesn't exist!" << std::endl;
@@ -30,11 +31,15 @@ bool Bmp :: find_and_allocate() {
     rows = info_header->biHeight;
     cols = info_header->biWidth;
     buffer_size = file_header->bfSize;
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "find and allocate duration : " << duration.count() * 1000 << " ms" << endl;
     return true;
 }
 
 
 void Bmp :: get_pixels_from_BMP24() {
+    auto start = chrono :: high_resolution_clock :: now();
     int count = 1;
     int extra = cols % 4;
     pixels = vector<vector<pixel>>(rows, vector<pixel>(cols));
@@ -62,11 +67,15 @@ void Bmp :: get_pixels_from_BMP24() {
             }
         }
     }
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "get pixels duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 
 
 void Bmp :: write_out_BMP24() {
+    auto start = chrono :: high_resolution_clock :: now();
     std::ofstream write(OUT_IMAGE_NAME);
     if (!write)
     {
@@ -99,11 +108,15 @@ void Bmp :: write_out_BMP24() {
         }
     }
     write.write(img_buffer, buffer_size);
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "write duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 
 
 void Bmp :: vertical_mirror() {
+    auto start = chrono :: high_resolution_clock :: now();
     for(int i = 0 ; i < rows/2 ; i++){
         for(int j = 0 ; j < cols ; j++){
             pixel tmp = pixels[i][j];
@@ -111,10 +124,14 @@ void Bmp :: vertical_mirror() {
             pixels[rows - i - 1][j] = tmp;
         }
     }
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "vertical mirror duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 
 void Bmp :: purple_haze() {
+    auto start = chrono :: high_resolution_clock :: now();
     vector <vector<pixel>> tmp_pixels(rows, vector<pixel>(cols));
     for(int i = 0 ; i < rows ; i++){
         for(int j = 0 ; j < cols ; j++){
@@ -142,6 +159,9 @@ void Bmp :: purple_haze() {
         }
     }
     pixels = tmp_pixels;
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "purple haze duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 
@@ -159,6 +179,7 @@ pixel Bmp :: convolve(int row, int col, float coeff, vector<vector<int>>kernel){
 
 
 void Bmp :: blur_filter() {
+    auto start = chrono :: high_resolution_clock :: now();
     vector <vector<pixel>> tmp(rows, vector<pixel>(cols));
     for(int i = 0 ; i < rows ; i++){
         tmp[i][0] = pixels[i][0];
@@ -174,10 +195,14 @@ void Bmp :: blur_filter() {
         }
     }
     pixels = tmp;
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "blur kernel duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 
 void Bmp :: draw_line() {
+    auto start = chrono :: high_resolution_clock :: now();
     int j = cols/2;
     int i = 0;
     while(j > 0 && i < rows/2){
@@ -199,6 +224,9 @@ void Bmp :: draw_line() {
         i++;
         j--;
     }
+    auto end = chrono :: high_resolution_clock :: now();
+    chrono :: duration<double> duration = end - start;
+    cout << "draw line duration : " << duration.count() * 1000 << " ms" << endl;
 }
 
 

@@ -25,6 +25,8 @@ class Bmp{
         bool find_and_allocate();
         void get_pixels_from_BMP24();
         void write_out_BMP24();
+        void vertical_mirror();
+        void purple_haze();
         void run();
 
 };

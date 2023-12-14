@@ -103,9 +103,34 @@ void Bmp :: write_out_BMP24() {
 
 
 
+void Bmp :: vertical_mirror() {
+    for(int i = 0 ; i < rows/2 ; i++){
+        for(int j = 0 ; j < cols ; j++){
+            pixel tmp = pixels[i][j];
+            pixels[i][j] = pixels[rows - i - 1][j];
+            pixels[rows - i - 1][j] = tmp;
+        }
+    }
+}
+
+
+void Bmp :: purple_haze() {
+    vector <vector<pixel>> tmp_pixels(rows, vector<pixel>(cols));
+    for(int i = 0 ; i < rows ; i++){
+        for(int j = 0 ; j < cols ; j++){
+            tmp_pixels[i][j].red = 0.5*pixels[i][j].red + 0.3*pixels[i][j].green + 0.5*pixels[i][j].blue;
+            tmp_pixels[i][j].green = 0.16*pixels[i][j].red + 0.5*pixels[i][j].green + 0.16*pixels[i][j].blue;
+            tmp_pixels[i][j].blue = 0.6*pixels[i][j].red + 0.2*pixels[i][j].green + 0.8*pixels[i][j].blue;
+        }
+    }
+    pixels = tmp_pixels;
+}
+
 
 void Bmp :: run() {
     find_and_allocate();
     get_pixels_from_BMP24();
+    purple_haze();
+    vertical_mirror();
     write_out_BMP24();
 }

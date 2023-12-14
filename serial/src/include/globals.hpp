@@ -30,9 +30,9 @@ typedef struct tagBITMAPINFOHEADER {
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
 typedef struct pixel{
-    int red;
-    int green;
-    int blue;
+    float red;
+    float green;
+    float blue;
     pixel(int r, int g, int b){
         red = std :: max(0, std :: min(255,r));
         green = std :: max(0, std :: min(255,g));

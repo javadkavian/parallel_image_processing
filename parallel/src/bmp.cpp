@@ -255,17 +255,7 @@ void Bmp :: purple_haze() {
 }
 
 
-pixel Bmp :: convolve(int row, int col, float coeff, vector<vector<int>>kernel){
-    int red=0, green=0, blue=0;
-    for(int i=-1; i<=1; i++){
-        for(int j=-1; j<=1; j++){
-            red += pixels[row+i][col+j].red * kernel[i+1][j+1];
-            green += pixels[row+i][col+j].green * kernel[i+1][j+1];
-            blue += pixels[row+i][col+j].blue * kernel[i+1][j+1];
-        }
-    }
-    return {coeff*red, coeff*green, coeff*blue};
-}
+
 
 
 
@@ -318,28 +308,26 @@ void Bmp :: blur_filter() {
 }
 
 
+void* bounded_draw_line(void* arg){
+    args* arg_;
+    arg_ = (args*)arg;
+    for(int i = arg_->begin_r ; i < arg_ -> end_r ; i++){
+        for(int j = 0 ; j < *arg_->cols ; j++){
+            if((i+j == *arg_->rows/2) || (i+j == *arg_->rows) || (i+j == 3*(*arg_->rows/2))){
+                (*arg_->pixels)[i][j] = {255, 255, 255};
+            }
+        }
+    }
+}
+
 void Bmp :: draw_line() {
     auto start = chrono :: high_resolution_clock :: now();
-    int j = cols/2;
-    int i = 0;
-    while(j > 0 && i < rows/2){
-        pixels[i][j] = {255,255,255};
-        i++;
-        j--;
+    pthread_t threads[4];
+    for(int i = 0 ; i < 4 ; i++){
+        pthread_create(&threads[i], nullptr, bounded_draw_line, &thread_parameters[i]);
     }
-    j = cols;
-    i = 0;
-    while(j>0 && i<rows){
-        pixels[i][j] = {255, 255, 255};
-        j--;
-        i++;
-    }
-    j = cols;
-    i = rows/2;
-    while(j>0 && i<rows){
-        pixels[i][j] = {255, 255, 255};
-        i++;
-        j--;
+    for(int i = 0 ; i < 4 ; i++){
+        pthread_join(threads[i], nullptr);
     }
     auto end = chrono :: high_resolution_clock :: now();
     chrono :: duration<double> duration = end - start;
@@ -353,6 +341,6 @@ void Bmp :: run() {
     vertical_mirror();
     blur_filter();
     purple_haze();
-    // draw_line();
+    draw_line();
     write_out_BMP24();
 }

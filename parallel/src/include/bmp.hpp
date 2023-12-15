@@ -34,7 +34,6 @@ class Bmp{
         void get_pixels_from_BMP24();
         void write_out_BMP24();
         void vertical_mirror();
-        pixel convolve(int row, int col, float coeff, std :: vector<std :: vector<int>>kernel);
         void blur_filter();
         void purple_haze();
         void draw_line();

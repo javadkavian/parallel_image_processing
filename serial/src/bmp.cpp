@@ -203,26 +203,12 @@ void Bmp :: blur_filter() {
 
 void Bmp :: draw_line() {
     auto start = chrono :: high_resolution_clock :: now();
-    int j = cols/2;
-    int i = 0;
-    while(j > 0 && i < rows/2){
-        pixels[i][j] = {255,255,255};
-        i++;
-        j--;
-    }
-    j = cols;
-    i = 0;
-    while(j>0 && i<rows){
-        pixels[i][j] = {255, 255, 255};
-        j--;
-        i++;
-    }
-    j = cols;
-    i = rows/2;
-    while(j>0 && i<rows){
-        pixels[i][j] = {255, 255, 255};
-        i++;
-        j--;
+    for(int i = 0 ; i < rows ; i++){
+        for(int j = 0 ; j < cols ; j++){
+            if((i+j == rows/2) || (i+j == rows) || (i+j == 3*(rows/2))){
+                pixels[i][j] = {255, 255, 255};
+            }
+        }
     }
     auto end = chrono :: high_resolution_clock :: now();
     chrono :: duration<double> duration = end - start;

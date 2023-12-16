@@ -55,13 +55,14 @@ typedef struct args{
     int end_r;
     int begin_c;
     int end_c;
+    int count;
     std :: vector < std :: vector <pixel>>* pixels;
     std :: vector < std :: vector <pixel>>* tmp;
     std :: vector<std :: vector<int>> blur = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
     args(char* img_buf, int* rows_, int* cols_, int* buf_size,
         int begin_r_, int end_r_, int begin_c_, int end_c_,
         std :: vector < std :: vector <pixel>>* pixels_,
-        std :: vector < std :: vector <pixel>>* tmp_)
+        std :: vector < std :: vector <pixel>>* tmp_, int count_)
     {
         img_buffer = img_buf;
         rows = rows_;
@@ -73,6 +74,7 @@ typedef struct args{
         end_c = end_c_;
         pixels = pixels_;
         tmp = tmp_;
+        count = count_;
     }
 }args;
 

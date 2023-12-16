@@ -44,10 +44,10 @@ bool Bmp :: find_and_allocate() {
 
 
 void Bmp :: create_thread_args(){
-    args arg1(img_buffer, &rows, &cols, &buffer_size, 0, rows/4,0, cols/4, &pixels, &tmp_vector);
-    args arg2(img_buffer, &rows, &cols, &buffer_size, rows/4, rows/2, cols/4, cols/2, &pixels, &tmp_vector);
-    args arg3(img_buffer, &rows, &cols, &buffer_size, rows/2, 3*(rows/4), cols/2, 3*(cols/4), &pixels, &tmp_vector);
-    args arg4(img_buffer, &rows, &cols, &buffer_size, 3*(rows/4), rows, 3*(cols/4), cols, &pixels, &tmp_vector);
+    args arg1(img_buffer, &rows, &cols, &buffer_size, 0, rows/4,0, cols/4, &pixels, &tmp_vector, 1);
+    args arg2(img_buffer, &rows, &cols, &buffer_size, rows/4, rows/2, cols/4, cols/2, &pixels, &tmp_vector, 196609);
+    args arg3(img_buffer, &rows, &cols, &buffer_size, rows/2, 3*(rows/4), cols/2, 3*(cols/4), &pixels, &tmp_vector, 393217);
+    args arg4(img_buffer, &rows, &cols, &buffer_size, 3*(rows/4), rows, 3*(cols/4), cols, &pixels, &tmp_vector, 589825);
     thread_parameters = {arg1, arg2, arg3, arg4};
 }
 
@@ -56,12 +56,12 @@ void Bmp :: create_thread_args(){
 void* bounded_get_pixels(void* arg){
     args* arg_;
     arg_ = (args*)arg;  
-    int count = 1;
+    int count = arg_->count;
     int extra = *arg_->cols % 4;
-    for (int i = 0; i < *arg_->rows; i++)
+    for (int i = arg_->begin_r; i < arg_->end_r; i++)
     {
         count += extra;
-        for (int j = arg_->end_c - 1; j >= arg_->begin_c; j--)
+        for (int j = *arg_->cols - 1; j >= 0; j--)
         {
             for (int k = 0; k < 3; k++)
             {
@@ -86,44 +86,13 @@ void* bounded_get_pixels(void* arg){
 
 
 void Bmp :: get_pixels_from_BMP24() {
-    // auto start = chrono :: high_resolution_clock :: now();
-    // pthread_t threads[4];
-    // for(int i = 0 ; i < 4 ; i++){
-    //         pthread_create(&threads[i], nullptr, bounded_get_pixels, &thread_parameters[i]);
-    // }
-    // for(int i = 0 ; i < 4 ; i++){
-    //     pthread_join(threads[i], nullptr);
-    // }
-    // auto end = chrono :: high_resolution_clock :: now();
-    // chrono :: duration<double> duration = end - start;
-    // cout << "get pixels duration : " << duration.count() * 1000 << " ms" << endl;
     auto start = chrono :: high_resolution_clock :: now();
-    int count = 1;
-    int extra = cols % 4;
-    pixels = vector<vector<pixel>>(rows, vector<pixel>(cols));
-    for (int i = 0; i < rows; i++)
-    {
-        count += extra;
-        for (int j = cols - 1; j >= 0; j--)
-        {
-            for (int k = 0; k < 3; k++)
-            {
-                unsigned char channel = img_buffer[buffer_size-count];
-                count++;
-                switch (k)
-                {
-                    case 0:
-                        pixels[i][j].green = int(channel);
-                        break;
-                    case 1:
-                        pixels[i][j].blue = int(channel);
-                        break;
-                    case 2:
-                        pixels[i][j].red = int(channel);
-                        break;
-                }
-            }
-        }
+    pthread_t threads[4];
+    for(int i = 0 ; i < 4 ; i++){
+            pthread_create(&threads[i], nullptr, bounded_get_pixels, &thread_parameters[i]);
+    }
+    for(int i = 0 ; i < 4 ; i++){
+        pthread_join(threads[i], nullptr);
     }
     auto end = chrono :: high_resolution_clock :: now();
     chrono :: duration<double> duration = end - start;

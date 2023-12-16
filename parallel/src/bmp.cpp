@@ -44,10 +44,12 @@ bool Bmp :: find_and_allocate() {
 
 
 void Bmp :: create_thread_args(){
+    int extra = cols%4;
+    int offset = extra + 3*cols;
     args arg1(img_buffer, &rows, &cols, &buffer_size, 0, rows/4,0, cols/4, &pixels, &tmp_vector, 1);
-    args arg2(img_buffer, &rows, &cols, &buffer_size, rows/4, rows/2, cols/4, cols/2, &pixels, &tmp_vector, 196609);
-    args arg3(img_buffer, &rows, &cols, &buffer_size, rows/2, 3*(rows/4), cols/2, 3*(cols/4), &pixels, &tmp_vector, 393217);
-    args arg4(img_buffer, &rows, &cols, &buffer_size, 3*(rows/4), rows, 3*(cols/4), cols, &pixels, &tmp_vector, 589825);
+    args arg2(img_buffer, &rows, &cols, &buffer_size, rows/4, rows/2, cols/4, cols/2, &pixels, &tmp_vector, 1 + (rows/4)*(offset));
+    args arg3(img_buffer, &rows, &cols, &buffer_size, rows/2, 3*(rows/4), cols/2, 3*(cols/4), &pixels, &tmp_vector,1 + (rows/2)*(offset));
+    args arg4(img_buffer, &rows, &cols, &buffer_size, 3*(rows/4), rows, 3*(cols/4), cols, &pixels, &tmp_vector,1 + 3*(rows/4)*(offset));
     thread_parameters = {arg1, arg2, arg3, arg4};
 }
 
@@ -125,13 +127,13 @@ void Bmp :: write_out_BMP24() {
                 switch (k)
                 {
                     case 0:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].green);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].red);
                         break;
                     case 1:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].blue);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].green);
                         break;
                     case 2:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].red);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].blue);
                         break;
                 }
             }

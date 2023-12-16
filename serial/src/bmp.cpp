@@ -95,13 +95,13 @@ void Bmp :: write_out_BMP24() {
                 switch (k)
                 {
                     case 0:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].green);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].red);
                         break;
                     case 1:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].blue);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].green);
                         break;
                     case 2:
-                        img_buffer[buffer_size - count] = char(pixels[i][j].red);
+                        img_buffer[buffer_size - count] = char(pixels[i][j].blue);
                         break;
                 }
             }
